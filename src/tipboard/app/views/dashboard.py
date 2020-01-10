@@ -59,7 +59,7 @@ def getTilesDependency(layout_name):
     return data
 
 
-def renderHtmlForTiles(request, layout_name='layout_config'):  # pragma: no cover
+def renderHtmlForTiles(request, layout_name='benchmark'):  # pragma: no cover
     """ Render Htlm page with CSS/JS dependency for all the tiles needed in layout.yaml(dashboard) """
     try:
         data = getTilesDependency(layout_name)

@@ -88,11 +88,13 @@ def update_tile_data_from_redis(previousData, newData):
 
 
 def save_tile_ToRedis(tile_id, tile_template, data, meta):  # pragma: no cover
+    print(f" data in cache")
     cache = getCache()
     tilePrefix = getRedisPrefix(tile_id)
     if not cache.redis.exists(tilePrefix) and DEBUG:  # if tile don't exist, create it with template, DEBUG mode only
         buildFakeDataFromTemplate(tile_id, tile_template, cache)
     cachedTile = json.loads(cache.redis.get(tilePrefix))
+    print(f"{cachedTile} data in cache")
     cachedTile['data'] = update_tile_data_from_redis(cachedTile['data'], json.loads(data))
     cachedTile['modified'] = getIsoTime()
     cachedTile['tile_template'] = tile_template

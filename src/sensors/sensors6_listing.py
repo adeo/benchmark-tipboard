@@ -29,7 +29,7 @@ def executeScriptToGetData():
 
 
 def sonde6(isTest=False):
-    TILE_ID = 'listing_ex'
+    TILE_ID = 'list_devices'
     print(f'{getTimeStr()} (+) Starting sensors 6', flush=True)
     start_time = time.time()
     data = executeScriptToGetData()
