@@ -1,5 +1,6 @@
 # coding: utf-8
 import json
+from statistics import mean
 
 import requests
 import logging
@@ -12,7 +13,7 @@ def basicMatomoRequest(method = "", query = {}):
     params['module'] = "API"
     params['method'] = method
     params["period"] = "range"
-    params["date"] = "2020-01-02,2020-01-10"
+    params["date"] = "2020-01-13,2020-03-10"
     params["format"] = "JSON"
     params["idSite"] = "1"
     params.update(query)
@@ -35,34 +36,40 @@ def getActionsIdByCategory(segment):
     params["segment"] = segment
     response = basicMatomoRequest(method="Events.getAction", query=params)
     if response.status_code == 200:
-        idSubList = dict()
-        idSubList["idsubdatatable"] = []
-        idSubList["label"] = []
+        idSubList = []
         for action in response.json():
-            idSubList["idsubdatatable"].append(action["idsubdatatable"])
-            idSubList["label"].append(action["label"])
+            idSubList.append({k: action[k] for k in ('label', 'idsubdatatable')})
         return idSubList
     raise
+
 
 
 def getCategories():
     params = dict()
     response = basicMatomoRequest(method="Events.getCategory", query=params)
     if response.status_code == 200:
-        categoryList = dict()
-        categoryList["segment"] = []
-        categoryList["label"] = []
+        categoryList = []
         for category in response.json():
-            categoryList["segment"].append(category["segment"])
-            categoryList["label"].append(category["label"])
+            categoryList.append({k: category[k] for k in ('label', 'segment')})
         return categoryList
     raise
 
-categoryList = getCategories()
-print(categoryList)
-for segment in categoryList["segment"]:
-    idSubList = getActionsIdByCategory(segment)
-    print(idSubList)
+def valueFromAction(action):
+    test = []
+    categoryList = getCategories()
+    for segment in categoryList:
+        x = dict()
+        x["device"] = segment["label"]
+        idSubList = getActionsIdByCategory(segment["segment"])
+        for id in idSubList:
+            if id["label"] == action:
+                x["values"] = [float(item) for item in getValueFromActionID(segment["segment"], id["idsubdatatable"])]
+                x["avg"] = mean(x["values"])
+        test.append(x)
+    return test
+
+def getDevices():
+    return [label["label"] for label in getCategories()]
 
 
 
