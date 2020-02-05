@@ -1,4 +1,4 @@
-import time, random
+import time
 
 from src.sensors.matomo_utils import valueFromAction, getDevices
 from src.sensors.utils import end, sendDataToTipboard
@@ -8,7 +8,6 @@ from src.tipboard.app.properties import COLOR_TAB
 def updateNormChartTipBoard(bench, tile, isTest=False):
     if not "values" in bench[0]:
         return
-    print("je suis ici")
     datasetLength = len(bench)
     data = dict()
     data['title'] = dict(display=False)
@@ -30,17 +29,18 @@ def updateListingTipBoard(list, tile, isTest=False):
 
 def updateCPUTipBoard(isTest=False):
     cpu_bench = valueFromAction("ackleyBenchmark")
+    print(f'CPU = {cpu_bench}')
     updateNormChartTipBoard(cpu_bench, 'cpu', isTest)
 
 
 def updateGPUTipBoard(isTest=False):
     gpu_bench = valueFromAction("scroll")
-    print(gpu_bench)
+    print(f'GPU = {gpu_bench}')
     updateNormChartTipBoard(gpu_bench, 'gpu', isTest)
 
 
 def updateNetworkTipBoard(isTest=False):
-    network_bench = valueFromAction("downloadFile")
+    network_bench = valueFromAction("dowloadFile")
     updateNormChartTipBoard(network_bench, 'network', isTest)
 
 
@@ -53,5 +53,10 @@ def sonde_bench(isTest=False):
     updateCPUTipBoard(isTest)
     updateGPUTipBoard(isTest)
     updateNetworkTipBoard(isTest)
-
     updateDevicesTipBoard(isTest)
+
+cpu_bench = valueFromAction("ackleyBenchmark")
+print(f'CPU = {cpu_bench}')
+
+gpu_bench = valueFromAction("scroll")
+print(f'GPU = {gpu_bench}')

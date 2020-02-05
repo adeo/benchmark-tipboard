@@ -4,10 +4,15 @@ from statistics import mean
 
 import requests
 import logging
+
 base_url = "http://benchmark-analytics-open.apps.op.acp.adeo.com/"
 token = "0b44547f5f0c9d526b46247c65aeef57"
+
+
 # logging.basicConfig(level=logging.DEBUG)
-def basicMatomoRequest(method = "", query = {}):
+def basicMatomoRequest(method="", query=None):
+    if query is None:
+        query = {}
     params = dict()
     params['token_auth'] = token
     params['module'] = "API"
@@ -18,6 +23,7 @@ def basicMatomoRequest(method = "", query = {}):
     params["idSite"] = "1"
     params.update(query)
     return requests.get(base_url, params=params)
+
 
 def getValueFromActionID(segment, id):
     params = dict()
@@ -31,6 +37,7 @@ def getValueFromActionID(segment, id):
         return responsesList
     raise
 
+
 def getActionsIdByCategory(segment):
     params = dict()
     params["segment"] = segment
@@ -43,7 +50,6 @@ def getActionsIdByCategory(segment):
     raise
 
 
-
 def getCategories():
     params = dict()
     response = basicMatomoRequest(method="Events.getCategory", query=params)
@@ -54,9 +60,11 @@ def getCategories():
         return categoryList
     raise
 
+
 def valueFromAction(action):
     test = []
     categoryList = getCategories()
+    print(categoryList)
     for segment in categoryList:
         x = dict()
         x["device"] = segment["label"]
@@ -65,13 +73,10 @@ def valueFromAction(action):
             if id["label"] == action:
                 x["values"] = [float(item) for item in getValueFromActionID(segment["segment"], id["idsubdatatable"])]
                 x["avg"] = mean(x["values"])
-        test.append(x)
+        if "values" in x:
+            test.append(x)
     return test
+
 
 def getDevices():
     return [label["label"] for label in getCategories()]
-
-
-
-
-
